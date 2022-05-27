@@ -25,7 +25,7 @@
     <div class="cart-main-area pt-100px pb-100px">
         <div class="container">
             <h3 class="cart-page-title">Your cart items</h3>
-            <div class="row">
+            <div class="row" id="cart_main_section">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                     <form action="#">
                         <div class="table-content table-responsive cart-table-content">
@@ -41,7 +41,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($carts as $cart)
+                                    <@php
+                                        $sub_total = 0;
+                                    @endphp
+                                    @forelse ($carts as $cart)
                                     <tr>
                                         <td class="product-thumbnail">
                                             <a href="#"><img class="img-responsive ml-15px"
@@ -64,13 +67,24 @@
                                         </td>
                                         <td class="product-subtotal">
                                             {{$cart->product_current_price * $cart->cart_amount}}
+                                            @php
+                                            $sub_total += ($cart->product_current_price*$cart->cart_amount);
+                                            @endphp
                                         </td>
                                         <td class="product-remove">
-                                            <a href="#"><i class="fa fa-pencil"></i></a>
-                                            <a href="#"><i class="fa fa-times"></i></a>
+
+                                            <a id="{{$cart->id}}" class="cart_item_delete_btn"><i class="fa fa-times"></i></a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                 @empty
+                              <tr>
+                                  <td colspan="55" class="text-danger text-center">
+                                      <b>No cart Items to show</b>
+                                  </td>
+                              </tr>
+
+
+                                @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -151,7 +165,7 @@
                                 <div class="title-wrap">
                                     <h4 class="cart-bottom-title section-bg-gary-cart">Cart Total</h4>
                                 </div>
-                                <h5>Total products <span>$260.00</span></h5>
+                                <h5>Total products <span>৳{{$sub_total}}</span></h5>
                                 <div class="total-shipping">
                                     <h5>Total shipping</h5>
                                     <ul>
@@ -171,4 +185,35 @@
     <!-- Cart Area End -->
 
 
+@endsection
+@section('footer_scripts')
+<script>
+$(document).ready(function(){
+     $('.cart_item_delete_btn').click(function(){
+      var cart_id =$(this).attr('id');
+             //ajax setup start
+           $.ajaxSetup({
+         headers: {
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+   $.ajax({
+       type : 'POST',
+       url : "{{route('cart.remove')}}",
+       data:{cart_id:cart_id},
+       success: function(data){
+
+           // $("#cart_main_section").load(" #cart_main_section> *");
+                  Swal.fire(
+                                'Cart item removed successfully!',
+                                'Importent!',
+                                'warning'
+                          )
+                          location.reload();
+       }
+   });
+     //ajax setup end
+    });
+});
+</script>
 @endsection

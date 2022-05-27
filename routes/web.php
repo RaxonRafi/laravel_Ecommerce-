@@ -27,6 +27,7 @@ Route::post('customer/register',[CustomerController::class, 'customerregister'])
 Route::get('customer/dashboard',[CustomerController::class, 'customerdashboard'])->name('customer.dashboard');
 Route::post('insert/cart',[CustomerController::class, 'insertcart'])->name('insert.cart');
 Route::get('cart',[CustomerController::class, 'cart'])->name('cart');
+Route::post('cart/remove',[CustomerController::class, 'cartremove'])->name('cart.remove');
 
 
 

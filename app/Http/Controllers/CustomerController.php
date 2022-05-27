@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -88,8 +89,19 @@ class CustomerController extends Controller
     }
     public function cart()
     {
-        $carts = Cart::where('user_id', auth()->id())->get();
-        return view('cart',compact('carts'));
+        if(Auth::check()){
+            $carts = Cart::where('user_id', auth()->id())->get();
+            return view('cart', compact('carts'));
+
+        }else{
+            return redirect('login');
+        }
+
+    }
+    public function cartremove(Request $request)
+    {
+        Cart::find($request->cart_id)->delete();
+   
     }
 }
 
