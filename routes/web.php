@@ -43,6 +43,11 @@ Route::post('/team/member/update/{team_member_id}', [HomeController::class, 'tea
 Route::get('/variation', [HomeController::class, 'variation'])->name('variation');
 Route::post('/add/color', [HomeController::class, 'addcolor'])->name('add.color');
 Route::post('/add/size', [HomeController::class, 'addsize'])->name('add.size');
+Route::get('/shipping', [HomeController::class, 'shipping'])->name('shipping');
+Route::post('/add/shipping', [HomeController::class, 'addshipping'])->name('add.shipping');
+
+
+
 Route::resource('category', CategoryController::class);
 Route::get('/restore/{id}', [CategoryController::class, 'restore'])->name('category.restore');
 Route::get('/forcedelete/{id}', [CategoryController::class, 'forcedelete'])->name('category.forcedelete');

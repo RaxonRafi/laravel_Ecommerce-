@@ -819,6 +819,11 @@
 							<span class="nav-text">Variation Manager</span>
 						</a>
 					</li>
+                     <li><a href="{{route('shipping')}}" class="ai-icon"" aria-expanded="false">
+							<i class="fa fa-truck"></i>
+							<span class="nav-text">Shipping chart</span>
+						</a>
+					</li>
                      <li><a href="{{route('index')}}" class="ai-icon"target="_blank" aria-expanded="false">
 							<i class="fa fa-globe"></i>
 							<span class="nav-text">Browse Website</span>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Country;
+use App\Models\Shipping;
 use App\Models\Size;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -157,6 +159,29 @@ class HomeController extends Controller
     {
       Size::insert($request->except('_token') + ['created_at' => Carbon::now()]);
         return back();
+    }
+    public function shipping()
+    {
+     $countries = Country::all();
+     $shippings = Shipping::all();
+    return view('shipping.index',compact('countries', 'shippings'));
+    }
+    public function addshipping(Request $request)
+    {
+    $status =shipping::where([
+        $request->country_id,
+        $request->city_name
+
+    ])->exists();
+    if($status){
+        return back()->with('errors','this country & city already exists');
+    }
+    else{
+
+            Shipping::insert($request->except('_token'));
+
+    };
+       return back();
     }
 
 }
