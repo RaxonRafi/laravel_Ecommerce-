@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Shipping;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as AuthUser;
@@ -90,18 +91,32 @@ class CustomerController extends Controller
     public function cart()
     {
         if(Auth::check()){
+            $countries = Shipping::select('country_id')->groupBy('country_id')->get();
             $carts = Cart::where('user_id', auth()->id())->get();
-            return view('cart', compact('carts'));
+            return view('cart', compact('carts', 'countries'));
 
         }else{
             return redirect('login');
         }
 
     }
+    public function getcitylist(Request $request)
+    {
+        $select_option = "<option value=''>--Select city--</option>";
+        $cities = Shipping::where('country_id', $request->country_id)->get();
+
+        foreach( $cities as $city){
+            $select_option .= "<option value='$city->shipping_charge'>$city->city_name</option>";
+
+        }
+        echo $select_option;
+
+
+    }
     public function cartremove(Request $request)
     {
         Cart::find($request->cart_id)->delete();
-   
+
     }
 }
 

@@ -115,33 +115,23 @@
                                             <label>
                                                 * Country
                                             </label>
-                                            <select class="email s-email s-wid">
-                                                <option>Bangladesh</option>
-                                                <option>Albania</option>
-                                                <option>Åland Islands</option>
-                                                <option>Afghanistan</option>
-                                                <option>Belgium</option>
+                                            <select class="email s-email s-wid" id="country_dropdown">
+                                                <option>--Select one country--</option>
+                                                @foreach ($countries as $country)
+                                                    <option value="{{$country->country_id}}">{{$country->relationTocountry->name}}</option>
+                                                @endforeach
+
+
                                             </select>
                                         </div>
                                         <div class="tax-select">
                                             <label>
                                                 * Region / State
                                             </label>
-                                            <select class="email s-email s-wid">
-                                                <option>Bangladesh</option>
-                                                <option>Albania</option>
-                                                <option>Åland Islands</option>
-                                                <option>Afghanistan</option>
-                                                <option>Belgium</option>
+                                            <select class="email s-email s-wid" id="city_dropdown" disabled>
+                                                <option>--Select Country first--</option>
                                             </select>
                                         </div>
-                                        <div class="tax-select mb-25px">
-                                            <label>
-                                                * Zip/Postal Code
-                                            </label>
-                                            <input type="text" />
-                                        </div>
-                                        <button class="cart-btn-2" type="submit">Get A Quote</button>
                                     </div>
                                 </div>
                             </div>
@@ -167,11 +157,7 @@
                                 </div>
                                 <h5>Total products <span>৳{{$sub_total}}</span></h5>
                                 <div class="total-shipping">
-                                    <h5>Total shipping</h5>
-                                    <ul>
-                                        <li><input type="checkbox" /> Standard <span>$20.00</span></li>
-                                        <li><input type="checkbox" /> Express <span>$30.00</span></li>
-                                    </ul>
+                                    <h5>Total shipping <span id="shipping_charge">0</span></h5>
                                 </div>
                                 <h4 class="grand-totall-title">Grand Total <span>$260.00</span></h4>
                                 <a href="checkout.html">Proceed to Checkout</a>
@@ -214,6 +200,32 @@ $(document).ready(function(){
    });
      //ajax setup end
     });
+    $('#country_dropdown').change(function(){
+      var country_id = $(this).val();
+                 //ajax setup start
+           $.ajaxSetup({
+         headers: {
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+   $.ajax({
+       type : 'POST',
+       url : "{{route('get.city.list')}}",
+       data:{country_id:country_id},
+       success: function(data){
+
+             $('#city_dropdown').attr('disabled', false);
+             $('#city_dropdown').html(data);
+       }
+   });
+     //ajax setup end
+    });
+       $('#city_dropdown').change(function(){
+
+        $('#shipping_charge').html($(this).val());
+        
+       });
+
 });
 </script>
 @endsection
