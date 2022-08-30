@@ -155,12 +155,15 @@
                                 <div class="title-wrap">
                                     <h4 class="cart-bottom-title section-bg-gary-cart">Cart Total</h4>
                                 </div>
-                                <h5>Total products <span>৳{{$sub_total}}</span></h5>
-                                <div class="total-shipping">
-                                    <h5>Total shipping <span id="shipping_charge">0</span></h5>
+                                <h5>Total products(৳)<span id="sub_total">{{$sub_total}}</span></h5>
+                                <div>
+                                    <h5>Total shipping (+) <span id="shipping_charge">0</span></h5>
                                 </div>
-                                <h4 class="grand-totall-title">Grand Total <span>$260.00</span></h4>
-                                <a href="checkout.html">Proceed to Checkout</a>
+                                <div >
+                                    <h5>Discount (-) <span id="discount_ammount">0</span></h5>
+                                </div>
+                                <h4 class="grand-totall-title">Grand Total(৳) <span id="grand_total">{{$sub_total}}</span></h4>
+                                <a class="d-none" id="checkout_btn" href="checkout.html">Proceed to Checkout</a>
                             </div>
                         </div>
                     </div>
@@ -201,6 +204,8 @@ $(document).ready(function(){
      //ajax setup end
     });
     $('#country_dropdown').change(function(){
+        $('#shipping_charge').html(0);
+        $('#checkout_btn').addClass('d-none');
       var country_id = $(this).val();
                  //ajax setup start
            $.ajaxSetup({
@@ -223,7 +228,20 @@ $(document).ready(function(){
        $('#city_dropdown').change(function(){
 
         $('#shipping_charge').html($(this).val());
-        
+        $('#checkout_btn').removeClass('d-none');
+        var sub_total =$('#sub_total').html() ;
+
+        var shipping_charge = $(this).val();
+
+
+          var grand_total = parseInt(sub_total)+parseInt(shipping_charge);
+
+        //  var grand_total = + parseInt(shipping_charge);
+
+         var grand_total = parseInt(sub_total) + parseInt(shipping_charge);
+         $('#grand_total').html(grand_total);
+
+
        });
 
 });

@@ -54,6 +54,7 @@
 <script>
     $(document).ready(function() {
     $('#category_dropdown').select2();
+
 });
 </script>
 @endsection

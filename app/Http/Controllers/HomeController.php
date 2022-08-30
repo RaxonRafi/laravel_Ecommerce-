@@ -168,20 +168,19 @@ class HomeController extends Controller
     }
     public function addshipping(Request $request)
     {
-    $status =shipping::where([
-        $request->country_id,
-        $request->city_name
 
-    ])->exists();
-    if($status){
-        return back()->with('errors','this country & city already exists');
-    }
-    else{
+      $status =Shipping::where([
+           'country_id'=> $request->country_id,
+            'city_name' => $request->city_name
 
+      ])->exists();
+      if($status){
+          return back()->with('errors','this country & city already exists');
+      }
+     else{
             Shipping::insert($request->except('_token'));
-
-    };
-       return back();
+      };
+      return back();
     }
 
 }
