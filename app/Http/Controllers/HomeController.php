@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Color;
 use App\Models\Country;
 use App\Models\Shipping;
+use  App\Models\coupon;
 use App\Models\Size;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -182,5 +183,27 @@ class HomeController extends Controller
       };
       return back();
     }
+    public function coupon()
+    {
+       $coupons = coupon::all();
+    return view('coupon.index',compact('coupons'));
+    }
+    public function addcoupon(Request $request)
+    {
 
+        $status = coupon::where([
+            'coupon_name'=> $request->coupon_name
+        ])->exists();
+
+    if($status){
+        return back()->with('errors','this coupon is already exists');
+    }else{
+        coupon::insert($request->except('_token') +[
+          'created_at'=>  Carbon::now()
+
+        ]);
+        return back()->with('success_message','Coupon added successfully');
+    }
+
+    }
 }

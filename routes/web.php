@@ -46,6 +46,8 @@ Route::post('/add/color', [HomeController::class, 'addcolor'])->name('add.color'
 Route::post('/add/size', [HomeController::class, 'addsize'])->name('add.size');
 Route::get('/shipping', [HomeController::class, 'shipping'])->name('shipping');
 Route::post('/add/shipping', [HomeController::class, 'addshipping'])->name('add.shipping');
+Route::get('/coupon', [HomeController::class, 'coupon'])->name('coupon');
+Route::post('/add/coupon', [HomeController::class, 'addcoupon'])->name('add.coupon');
 
 
 
