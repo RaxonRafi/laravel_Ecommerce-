@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\coupon;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\product_featured_photo;
@@ -56,6 +57,22 @@ class FrontendController extends Controller
             'color_id' => $request->color_id,
             'size_id' => $request->size_id
         ])->first()->quantity;
+    }
+
+    public function checkcoupon(Request $request){
+
+
+     if(coupon::where('coupon_name', $request->cpn_name)->exists()){
+
+
+     }else{
+        return response()->json([
+
+            'error'=> 'Invalid Coupon Code!'
+        ]);
+     }
+
+
     }
 
 }

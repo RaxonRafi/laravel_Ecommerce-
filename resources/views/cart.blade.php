@@ -143,10 +143,11 @@
                                 </div>
                                 <div class="discount-code">
                                     <p>Enter your coupon code if you have one.</p>
-                                    <form>
-                                        <input type="text" required="" name="name" />
-                                        <button class="cart-btn-2" type="submit">Apply Coupon</button>
-                                    </form>
+
+                                        <input type="text" required="" name="name" id="cpn_name" />
+                                       <div id="coupon_error" class="alert alert-danger d-none"></div>
+                                        <button id="cpn_btn" class="d-none cart-btn-2" type="button">Apply Coupon</button>
+
                                 </div>
                             </div>
                         </div>
@@ -243,6 +244,40 @@ $(document).ready(function(){
 
 
        });
+
+       $('#cpn_name').keyup(function(){
+
+
+        $('#cpn_btn').removeClass('d-none');
+
+
+       });
+       $('#cpn_btn').click(function(){
+
+        const cpn_name = $('#cpn_name').val();
+
+            //ajax setup start
+            $.ajaxSetup({
+         headers: {
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+   $.ajax({
+       type : 'POST',
+       url : "{{route('check.coupon')}}",
+       data:{cpn_name:cpn_name},
+       success: function(data){
+          if(data.error){
+            $('#coupon_error').removeClass('d-none');
+            $('#coupon_error').html(data.error);
+          }
+       }
+   });
+     //ajax setup end
+
+
+
+        });
 
 });
 </script>

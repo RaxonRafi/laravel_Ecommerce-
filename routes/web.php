@@ -17,6 +17,7 @@ Route::get('team',[FrontendController::class,'team']);
 Route::get('contact',[FrontendController::class,'contact']);
 Route::post('get/sizes',[FrontendController::class, 'getsizes'])->name('get.sizes');
 Route::post('get/inventory',[FrontendController::class, 'getinventory'])->name('get.inventory');
+Route::post('check/coupon',[FrontendController::class, 'checkcoupon'])->name('check.coupon');
 
 Auth::routes(['login'=>false]);
 Route::get('/admin/login',[LoginController::class, 'showLoginForm'])->name('login');
