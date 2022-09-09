@@ -6,8 +6,8 @@ Generate Coupon
 @section('content')
 
   <div class="row">
-    <div class="col-6">
-        <div class="col-12">
+    <div class="col-4">
+
          <div class="card">
             <div class="card-header text-white bg-primary">
             <h4 class="card-title text-white">Generated Coupon List </h4>
@@ -57,17 +57,17 @@ Generate Coupon
          </div>
 
          <div class="form-group">
-           <button class="btn btn-success" type="submit">Add Shipping</button>
+           <button class="btn btn-success" type="submit">Add Coupon</button>
            </div>
          </form>
          </div>
-      </div>
+
 
         </div>
 
     </div>
-    <div class="col-6">
-        <div class="col-12">
+    <div class="col-8">
+
          <div class="card">
             <div class="card-header text-white bg-primary">
             <h4 class="card-title text-white">Shipping Charge</h4>
@@ -107,7 +107,7 @@ Generate Coupon
 
 
          </div>
-      </div>
+
         </div>
 
     </div>

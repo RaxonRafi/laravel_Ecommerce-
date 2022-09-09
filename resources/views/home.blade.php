@@ -1,4 +1,9 @@
 @extends('layouts.dashboard_master')
+
+@section('dashboard_bar')
+Dashboard
+@endsection
+
 @section('content')
 	<div class="col-xl-6 col-xxl-12">
 						<div class="row">
