@@ -164,7 +164,7 @@
                                     <h5>Discount (-) <span id="discount_ammount">0</span></h5>
                                 </div>
                                 <h4 class="grand-totall-title">Grand Total(৳) <span id="grand_total">{{$sub_total}}</span></h4>
-                                <a class="d-none" id="checkout_btn" href="checkout.html">Proceed to Checkout</a>
+                                <a class="d-none" id="checkout_btn" href="{{route('checkout')}}">Proceed to Checkout</a>
                             </div>
                         </div>
                     </div>
@@ -234,13 +234,32 @@ $(document).ready(function(){
 
         var shipping_charge = $(this).val();
 
+        var discount_ammount = $('#discount_ammount').html();
 
-          var grand_total = parseInt(sub_total)+parseInt(shipping_charge);
-
-        //  var grand_total = + parseInt(shipping_charge);
-
-         var grand_total = parseInt(sub_total) + parseInt(shipping_charge);
+          var grand_total = parseInt(sub_total)+parseInt(shipping_charge) - parseInt(discount_ammount);
+        // var grand_total = parseInt(sub_total) + parseInt(shipping_charge);
          $('#grand_total').html(grand_total);
+
+         var country_id = $('#country_dropdown :selected').val();
+         var city_name = $(this).children("option:selected").html();
+          //ajax setup start
+            $.ajaxSetup({
+         headers: {
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+   $.ajax({
+       type : 'POST',
+       url : "{{route('set.country.city')}}",
+       data:{country_id:country_id,city_name:city_name},
+       success: function(data){
+
+             
+       }
+   });
+     //ajax setup end
+
+
 
 
        });
@@ -255,6 +274,7 @@ $(document).ready(function(){
        $('#cpn_btn').click(function(){
 
         const cpn_name = $('#cpn_name').val();
+        const sub_total = "{{$sub_total}}";
 
             //ajax setup start
             $.ajaxSetup({
@@ -265,11 +285,22 @@ $(document).ready(function(){
    $.ajax({
        type : 'POST',
        url : "{{route('check.coupon')}}",
-       data:{cpn_name:cpn_name},
+       data:{cpn_name:cpn_name,sub_total:sub_total},
        success: function(data){
           if(data.error){
             $('#coupon_error').removeClass('d-none');
             $('#coupon_error').html(data.error);
+          }else{
+
+             $('#coupon_error').addClass('d-none');
+             $('#discount_ammount').html(data.coupon_type);
+             $('#discount_ammount').html(data.coupon_ammount);
+
+             const shipping_charge = $('#shipping_charge').html();
+             $('#grand_total').html(data.grand_total + parseInt(shipping_charge) );
+
+
+
           }
        }
    });

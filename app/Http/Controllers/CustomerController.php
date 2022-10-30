@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CustomerController extends Controller
 {
@@ -118,6 +119,12 @@ class CustomerController extends Controller
         Cart::find($request->cart_id)->delete();
 
     }
+    public function setcountrycity(Request $request){
+        
+        Session::put('s_country_id',$request->country_id);
+        Session::put('s_city_name',$request->city_name);
+    }
+
 }
 
 

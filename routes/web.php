@@ -18,6 +18,8 @@ Route::get('contact',[FrontendController::class,'contact']);
 Route::post('get/sizes',[FrontendController::class, 'getsizes'])->name('get.sizes');
 Route::post('get/inventory',[FrontendController::class, 'getinventory'])->name('get.inventory');
 Route::post('check/coupon',[FrontendController::class, 'checkcoupon'])->name('check.coupon');
+Route::get('checkout',[FrontendController::class,'checkout'])->name('checkout');
+
 
 Auth::routes(['login'=>false]);
 Route::get('/admin/login',[LoginController::class, 'showLoginForm'])->name('login');
@@ -30,6 +32,7 @@ Route::post('insert/cart',[CustomerController::class, 'insertcart'])->name('inse
 Route::get('cart',[CustomerController::class, 'cart'])->name('cart');
 Route::post('cart/remove',[CustomerController::class, 'cartremove'])->name('cart.remove');
 Route::post('get/city/list',[CustomerController::class, 'getcitylist'])->name('get.city.list');
+Route::post('set/country/city',[CustomerController::class, 'setcountrycity'])->name('set.country.city');
 
 
 
