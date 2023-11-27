@@ -120,7 +120,7 @@ class CustomerController extends Controller
 
     }
     public function setcountrycity(Request $request){
-        
+
         Session::put('s_country_id',$request->country_id);
         Session::put('s_city_name',$request->city_name);
     }

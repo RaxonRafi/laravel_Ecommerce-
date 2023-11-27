@@ -61,12 +61,13 @@
                                         <td class="product-price-cart"><span class="amount">৳{{$cart->product_current_price}}</span></td>
                                         <td class="product-quantity">
                                             <div class="cart-plus-minus">
-                                                <input class="cart-plus-minus-box" type="text" name="qtybutton"
+                                                <input id="cart-plus-minus-box" class="cart-plus-minus-box" type="text" name="qtybutton"
                                                     value="{{$cart->cart_amount}}" />
                                             </div>
                                         </td>
                                         <td class="product-subtotal">
-                                            {{$cart->product_current_price * $cart->cart_amount}}
+                                            <span id="product_subtotal">{{$cart->product_current_price * $cart->cart_amount}}</span>
+
                                             @php
                                             $sub_total += ($cart->product_current_price*$cart->cart_amount);
                                             @endphp
@@ -178,7 +179,42 @@
 @endsection
 @section('footer_scripts')
 <script>
+   /*----------------------------
+        Cart Plus Minus Button
+    ------------------------------ */
+    var CartPlusMinus = $(".cart-plus-minus");
+CartPlusMinus.prepend('<div class="dec qtybutton">-</div>');
+CartPlusMinus.append('<div class="inc qtybutton">+</div>');
+
+$(".qtybutton").on("click", function () {
+    var $button = $(this);
+    var oldValue = $button.parent().find("input").val();
+
+    if ($button.text() === "+") {
+        var newVal = parseFloat(oldValue) + 1;
+    } else {
+    
+        if (oldValue > 1) {
+            var newVal = parseFloat(oldValue) - 1;
+        } else {
+            newVal = 1;
+        }
+    }
+
+    $button.parent().find("input").val(newVal);
+
+    // // Update the product subtotal
+    // var product_subtotal_element = document.getElementById("product_subtotal");
+    // var product_subtotal = parseFloat(product_subtotal_element.innerText);
+    // var result = product_subtotal * newVal;
+
+    // // Update the content of the span with the calculated result
+    // product_subtotal_element.innerText = result.toFixed(2);
+});
 $(document).ready(function(){
+
+
+
      $('.cart_item_delete_btn').click(function(){
       var cart_id =$(this).attr('id');
              //ajax setup start
@@ -232,6 +268,7 @@ $(document).ready(function(){
         $('#checkout_btn').removeClass('d-none');
         var sub_total =$('#sub_total').html() ;
 
+
         var shipping_charge = $(this).val();
 
         var discount_ammount = $('#discount_ammount').html();
@@ -254,7 +291,7 @@ $(document).ready(function(){
        data:{country_id:country_id,city_name:city_name},
        success: function(data){
 
-             
+
        }
    });
      //ajax setup end
