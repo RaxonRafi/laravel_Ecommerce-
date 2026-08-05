@@ -149,7 +149,6 @@ historical orders.
 - **Checkout with address capture and payment method selection**
 - **Order placement** — transactional, with stock reservation
 - **Order confirmation page and order history**
-- Queued order confirmation email
 
 **Admin**
 - Authentication with role separation (`admin` / `customer`) via `CheckRole` middleware
@@ -170,6 +169,7 @@ historical orders.
 | Feature | State |
 |---|---|
 | **Payments** | Cash on delivery works. SSLCommerz and bKash are scaffolded with integration notes but not implemented — see [Payments](#payments). |
+| **Order confirmation email** | The queued notification is written and tested, but **no email is actually delivered**: `MAIL_FROM_ADDRESS` is unset and there is no SMTP service in `docker-compose.yml`. Sending fails, is caught and logged, and the order still completes. Needs a mail service wired up. |
 | **Email verification** | Scaffolded by Laravel UI but not enforced anywhere. |
 | **SMS on registration** | Commented out in `CustomerController`. Credentials moved to config; needs rotating and a queued job before re-enabling. |
 | **Test coverage** | Order placement is well covered. The rest of the app has none. |

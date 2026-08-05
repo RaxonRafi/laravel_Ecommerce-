@@ -16,10 +16,52 @@ use Illuminate\Support\Facades\Session;
 
 class FrontendController extends Controller
 {
+   /**
+    * How many products each homepage tab shows. The homepage previously loaded the
+    * entire catalogue on every request, including one unbounded query per category
+    * executed from inside the Blade template.
+    */
+   private const HOMEPAGE_LIMIT = 8;
+
+   private const PER_PAGE = 12;
+
    public function index(){
        $categories = Category::all();
-       $products = Product::latest()->get();
-        return view('index',compact('categories','products'));
+       $products = Product::latest()->take(self::HOMEPAGE_LIMIT)->get();
+
+       $categoryProducts = $categories->mapWithKeys(fn ($category) => [
+           $category->id => Product::where('category_id', $category->id)
+               ->latest()
+               ->take(self::HOMEPAGE_LIMIT)
+               ->get(),
+       ]);
+
+        return view('index',compact('categories','products','categoryProducts'));
+   }
+
+   /**
+    * Paginated catalogue with keyword search and optional category filter.
+    */
+   public function shop(Request $request){
+       $search = trim((string) $request->query('q', ''));
+       $categoryId = $request->query('category');
+
+       $products = Product::query()
+           ->when($search !== '', function ($query) use ($search) {
+               $term = '%'.$search.'%';
+               $query->where(fn ($q) => $q
+                   ->where('product_name', 'like', $term)
+                   ->orWhere('sku', 'like', $term)
+                   ->orWhere('short_description', 'like', $term));
+           })
+           ->when($categoryId, fn ($query) => $query->where('category_id', $categoryId))
+           ->latest()
+           ->paginate(self::PER_PAGE)
+           ->withQueryString();
+
+       $categories = Category::all();
+
+       return view('shop', compact('products','categories','search','categoryId'));
    }
    public function about(){
        return view('about');

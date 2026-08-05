@@ -22,6 +22,16 @@ services:
         depends_on:
             database:
                 condition: service_healthy
+            mailpit:
+                condition: service_started
+
+    # Catches all outbound mail in development. Nothing ever leaves the machine;
+    # read the messages at http://localhost:8025.
+    mailpit:
+        image: axllent/mailpit:latest
+        ports:
+            - "1025:1025"   # SMTP
+            - "8025:8025"   # web UI
 
     database:
         image: mysql:8.0

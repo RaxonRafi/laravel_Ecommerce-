@@ -162,7 +162,8 @@
                          @foreach ($categories as $category)
                         <div class="tab-pane fade" id="tab-product-{{$category->id}}">
                             <div class="row">
-                                @forelse (App\Models\Product::where('category_id',$category->id)->get() as $product)
+                                {{-- Preloaded in the controller; this used to run an unbounded query per category from the template. --}}
+                                @forelse ($categoryProducts[$category->id] ?? [] as $product)
                            <div class="col-lg-4 col-xl-3 col-md-6 col-sm-6 col-xs-6 mb-30px" data-aos="fade-up"
                                     data-aos-delay="200">
                                     <!-- Single Prodect -->
@@ -183,7 +184,7 @@
                         <!-- categorywise tab end -->
 
                     </div>
-                    <a href="shop-left-sidebar.html" class="btn btn-lg btn-primary btn-hover-dark m-auto"> Load More <i
+                    <a href="{{ route('shop') }}" class="btn btn-lg btn-primary btn-hover-dark m-auto"> Shop All <i
                             class="fa fa-arrow-right ml-15px" aria-hidden="true"></i></a>
                 </div>
             </div>
