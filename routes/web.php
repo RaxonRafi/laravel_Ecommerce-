@@ -1,9 +1,11 @@
 <?php
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Auth\Events\Login;
@@ -18,21 +20,38 @@ Route::get('contact',[FrontendController::class,'contact']);
 Route::post('get/sizes',[FrontendController::class, 'getsizes'])->name('get.sizes');
 Route::post('get/inventory',[FrontendController::class, 'getinventory'])->name('get.inventory');
 Route::post('check/coupon',[FrontendController::class, 'checkcoupon'])->name('check.coupon');
-Route::get('checkout',[FrontendController::class,'checkout'])->name('checkout');
 
 
 Auth::routes(['login'=>false]);
 Route::get('/admin/login',[LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login',[LoginController::class, 'login'])->name('adminlogin');
 
+// Public: reaching the login/registration screen must not require a session.
 Route::get('login',[CustomerController::class, 'customerlogin'])->name('customerlogin');
 Route::post('customer/register',[CustomerController::class, 'customerregister'])->name('customer.register');
-Route::get('customer/dashboard',[CustomerController::class, 'customerdashboard'])->name('customer.dashboard');
-Route::post('insert/cart',[CustomerController::class, 'insertcart'])->name('insert.cart');
-Route::get('cart',[CustomerController::class, 'cart'])->name('cart');
-Route::post('cart/remove',[CustomerController::class, 'cartremove'])->name('cart.remove');
 Route::post('get/city/list',[CustomerController::class, 'getcitylist'])->name('get.city.list');
-Route::post('set/country/city',[CustomerController::class, 'setcountrycity'])->name('set.country.city');
+
+// Everything that reads or mutates a specific customer's cart requires a session.
+Route::middleware('auth')->group(function () {
+    Route::get('customer/dashboard',[CustomerController::class, 'customerdashboard'])->name('customer.dashboard');
+    Route::post('insert/cart',[CustomerController::class, 'insertcart'])->name('insert.cart');
+    Route::get('cart',[CustomerController::class, 'cart'])->name('cart');
+    Route::post('cart/remove',[CustomerController::class, 'cartremove'])->name('cart.remove');
+    Route::post('set/country/city',[CustomerController::class, 'setcountrycity'])->name('set.country.city');
+    Route::get('checkout',[FrontendController::class,'checkout'])->name('checkout');
+
+    // Orders
+    Route::post('order/place',[OrderController::class,'store'])->name('order.place');
+    Route::get('orders',[OrderController::class,'index'])->name('order.index');
+    Route::get('order/{order}',[OrderController::class,'show'])->name('order.show');
+});
+
+// Admin order management. Guarded by auth + checkrole inside the controller.
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('orders',[AdminOrderController::class,'index'])->name('orders.index');
+    Route::get('orders/{order}',[AdminOrderController::class,'show'])->name('orders.show');
+    Route::patch('orders/{order}/status',[AdminOrderController::class,'updateStatus'])->name('orders.status');
+});
 
 
 

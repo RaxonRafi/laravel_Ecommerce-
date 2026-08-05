@@ -65,20 +65,24 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>May 10, 2018</td>
-                                            <td><span class="success">Completed</span></td>
-                                            <td>$25.00 for 1 item </td>
-                                            <td><a href="cart.html" class="view">view</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>May 10, 2018</td>
-                                            <td>Processing</td>
-                                            <td>$17.00 for 1 item </td>
-                                            <td><a href="cart.html" class="view">view</a></td>
-                                        </tr>
+                                        @forelse (auth()->user()->orders()->withCount('items')->take(10)->get() as $order)
+                                            <tr>
+                                                <td>{{ $order->order_number }}</td>
+                                                <td>{{ optional($order->placed_at)->format('M d, Y') }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ $order->status->badge() }}">{{ $order->status->label() }}</span>
+                                                </td>
+                                                <td>
+                                                    {{ $order->currency }} {{ number_format((float) $order->grand_total, 2) }}
+                                                    for {{ $order->items_count }} {{ Str::plural('item', $order->items_count) }}
+                                                </td>
+                                                <td><a href="{{ route('order.show', $order) }}" class="view">view</a></td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5">You haven't placed any orders yet.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

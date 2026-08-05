@@ -686,7 +686,8 @@
                                 $.ajax({
                                     type : 'POST',
                                     url : "{{route('insert.cart')}}",
-                                    data:{product_id:product_id, product_current_price:product_current_price, color_id:color_id, size_id:size_id, cart_amount:cart_amount, user_id:user_id},
+                                    {{-- Price and user are resolved server-side; sending them here would be ignored. --}}
+                                    data:{product_id:product_id, color_id:color_id, size_id:size_id, cart_amount:cart_amount},
                                     success: function(data){
 
                                         $('#header_cart_num').html(data.cart_amount_status +parseInt($('#header_cart_num').html()));

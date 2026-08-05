@@ -30,4 +30,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+     * SMS gateway used for the registration confirmation message.
+     *
+     * The send is currently commented out in CustomerController. If it is
+     * re-enabled, credentials must come from here — never inline in code.
+     */
+    'sms' => [
+        'url' => env('SMS_API_URL'),
+        'username' => env('SMS_API_USERNAME'),
+        'password' => env('SMS_API_PASSWORD'),
+    ],
+
 ];
