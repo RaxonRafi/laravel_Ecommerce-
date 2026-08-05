@@ -64,12 +64,21 @@
                                     <div class="login-register-form">
                                         <form action="{{route('customer.register')}}" method="post">
                                             @csrf
-                                            <input type="text" name="name" placeholder="Username" />
-                                           <input name="email" placeholder="email" type="email" />
-                                           <input name="phone_number" placeholder="phone" type="phone" />
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger">
+                                                    <ul class="mb-0">
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                            <input type="text" name="name" placeholder="Username" value="{{ old('name') }}" />
+                                           <input name="email" placeholder="email" type="email" value="{{ old('email') }}" />
+                                           <input name="phone_number" placeholder="phone" type="phone" value="{{ old('phone_number') }}" />
                                             <input type="password" name="password" placeholder="Password" />
-                                            <input type="password" name="" placeholder="confirm Password" />
-                                            <textarea class="form-control" placeholder="Address" name="address"cols="3" rows="3"></textarea>
+                                            <input type="password" name="password_confirmation" placeholder="confirm Password" />
+                                            <textarea class="form-control" placeholder="Address" name="address" cols="3" rows="3">{{ old('address') }}</textarea>
                                             <div class="button-box">
                                                 <button type="submit"><span>Register</span></button>
                                             </div>

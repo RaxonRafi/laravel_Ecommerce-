@@ -68,6 +68,8 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            // Set explicitly: never rely on the column default to decide privilege.
+            'role' => 'customer',
         ]);
     }
 }

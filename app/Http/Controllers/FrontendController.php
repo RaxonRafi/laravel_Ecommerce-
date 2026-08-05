@@ -32,7 +32,7 @@ class FrontendController extends Controller
    public function productdetails($slug){
 
 
-       $product = Product::where('slug',$slug)->first();
+       $product = Product::where('slug',$slug)->firstOrFail();
         $product_featured_photos = product_featured_photo::where('product_id', $product->id)->get();
        $related_products = Product::where('subcategory_id',$product->subcategory_id)->where('id','!=',$product->id)->get();
        $inventories = Inventory::where('product_id', $product->id)->select('color_id')->groupBy('color_id')->get();
@@ -55,11 +55,14 @@ class FrontendController extends Controller
     }
     public function getinventory(Request $request)
     {
-        echo  Inventory::where([
+        // No matching combination means nothing is stocked, not a server error.
+        $inventory = Inventory::where([
             'product_id' => $request->product_id,
             'color_id' => $request->color_id,
             'size_id' => $request->size_id
-        ])->first()->quantity;
+        ])->first();
+
+        echo $inventory->quantity ?? 0;
     }
 
     public function checkcoupon(Request $request){
@@ -151,18 +154,31 @@ class FrontendController extends Controller
 
     public function checkout(){
 
+        $carts = Cart::where('user_id', auth()->id())->get();
+
+        if($carts->isEmpty()){
+            return redirect()->route('cart')->with('checkout_error','Your cart is empty.');
+        }
 
         $sub_total = 0;
-        foreach(Cart::where('user_id',auth()->user()->id)->get() as $cart){
+        foreach($carts as $cart){
              $sub_total +=  ($cart->product_current_price*$cart->cart_amount);
 
         }
 
-     $shipping_charge = Shipping::where([
+        // Set from the cart page. Reaching checkout without it (a direct visit, or
+        // an expired session) previously threw a fatal error on a null lookup.
+        $shipping = Shipping::where([
 
             'country_id' => Session::get('s_country_id'),
             'city_name' =>  Session::get('s_city_name')
-        ])->first()->shipping_charge;
+        ])->first();
+
+        if(! $shipping){
+            return redirect()->route('cart')->with('checkout_error','Please choose your delivery country and city before checking out.');
+        }
+
+        $shipping_charge = $shipping->shipping_charge;
 
 
 
@@ -188,7 +204,11 @@ class FrontendController extends Controller
 
         $grand_total = $after_coupon_total + $shipping_charge;
 
-        return view('checkout', compact('shipping_charge','sub_total','after_coupon_total','grand_total'));
+        $carts->load(['relationtoproduct','relationtocolor','relationtosize']);
+        $gateways = app(\App\Payments\PaymentGatewayManager::class)->available();
+        $currency = config('payment.currency','BDT');
+
+        return view('checkout', compact('shipping_charge','sub_total','after_coupon_total','grand_total','carts','gateways','currency'));
 
        }
 

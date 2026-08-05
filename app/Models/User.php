@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone_number',
         'address',
         'profile_photo',
+        'role',
     ];
 
     /**
@@ -44,4 +45,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class)->latest();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role !== 'customer';
+    }
 }
