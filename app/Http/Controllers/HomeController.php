@@ -16,7 +16,7 @@ use Faker\Provider\Image as ProviderImage;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Str;
-use Image;
+use Intervention\Image\Laravel\Facades\Image;
 
 
 class HomeController extends Controller
@@ -110,7 +110,7 @@ class HomeController extends Controller
         $new_name =auth()->id()."-".Str::random(5).".".$request->file('profile_photo')->getClientOriginalExtension();
         //step:2-Profile photo upload
        $save_link = base_path("public/uploads/profile_photo/").$new_name;
-       Image::make($request->file('profile_photo'))->resize(300,300)->save($save_link);
+       Image::read($request->file('profile_photo'))->resize(300,300)->save($save_link);
        // step:3-Profile photo name update at database
         User::find(auth()->id())->update([
                 'profile_photo'=>$new_name

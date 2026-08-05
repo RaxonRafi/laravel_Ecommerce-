@@ -15,7 +15,20 @@ return [
     |
     */
 
-    'default' => env('CACHE_DRIVER', 'file'),
+    'default' => env('CACHE_STORE', env('CACHE_DRIVER', 'file')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | Restricts which PHP classes may be unserialized when reading from the
+    | cache, hardening the application against deserialization gadget chain
+    | attacks if the APP_KEY is ever leaked. Set to false to allow none.
+    |
+    */
+
+    'serializable_classes' => false,
 
     /*
     |--------------------------------------------------------------------------

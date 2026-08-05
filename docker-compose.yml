@@ -1,33 +1,42 @@
-version: '3.8'
-
 services:
     php:
         build:
             context: .
             target: php
-            args:
-                - APP_ENV=${APP_ENV}
         environment:
-            - APP_ENV=${APP_ENV}
+            - APP_ENV=${APP_ENV:-local}
             - CONTAINER_ROLE=app
+            - DB_CONNECTION=mysql
+            - DB_HOST=database
+            - DB_PORT=3306
+            - DB_DATABASE=${DB_DATABASE:-goldfish}
+            - DB_USERNAME=${DB_USERNAME:-db_user}
+            - DB_PASSWORD=${DB_PASSWORD:-password}
         working_dir: /var/www
         volumes:
             - ./:/var/www
         ports:
-            - 8000:8000
+            - "8000:8000"
+            # Vite dev server, for `npm run dev`.
+            - "5173:5173"
         depends_on:
-            - database
-        command: ["./Docker/entrypoint.sh"]
+            database:
+                condition: service_healthy
 
     database:
         image: mysql:8.0
         ports:
             - "3307:3306"
         environment:
-           - MYSQL_DATABASE=${DB_DATABASE}
-           - MYSQL_USER=${DB_USERNAME}
-           - MYSQL_PASSWORD=${DB_PASSWORD}
-           - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+            - MYSQL_DATABASE=${DB_DATABASE:-goldfish}
+            - MYSQL_USER=${DB_USERNAME:-db_user}
+            - MYSQL_PASSWORD=${DB_PASSWORD:-password}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD:-password}"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
         volumes:
             - db-data:/var/lib/mysql
 

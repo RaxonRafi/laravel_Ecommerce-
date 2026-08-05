@@ -12,7 +12,7 @@ use App\Models\Subcategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Image;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -78,7 +78,7 @@ class ProductController extends Controller
             $new_name = auth()->id() . "-" . Str::random(5) . "." . $request->file('product_thumbnail_photo')->getClientOriginalExtension();
             //step:2-Profile photo upload
             $save_link = base_path("public/uploads/product_thumbnail_photo/") . $new_name;
-            Image::make($request->file('product_thumbnail_photo'))->resize(270, 310)->save($save_link);
+            Image::read($request->file('product_thumbnail_photo'))->resize(270, 310)->save($save_link);
      //photo upload code end
      Product::find($product_id)->update([
         'product_thumbnail_photo'=> $new_name,
@@ -166,7 +166,7 @@ class ProductController extends Controller
                 $new_name = $product_id . "-" . Str::random(5) . "." . $product_featured_photo->getClientOriginalExtension();
                 //step:2-Profile photo upload
                 $save_link = base_path("public/uploads/product_featured_photo/") . $new_name;
-                Image::make($product_featured_photo)->resize(270, 310)->save($save_link);
+                Image::read($product_featured_photo)->resize(270, 310)->save($save_link);
                 //photo upload code end
                 product_featured_photo::insert([
                     'product_id' => $product_id,
