@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/',[FrontendController::class,'index'])->name('index');
+Route::get('shop',[FrontendController::class,'shop'])->name('shop');
 Route::get('product/details/{slug}',[FrontendController::class, 'productdetails'])->name('productdetails');
 Route::get('about',[FrontendController::class,'about']);
 Route::get('team',[FrontendController::class,'team']);

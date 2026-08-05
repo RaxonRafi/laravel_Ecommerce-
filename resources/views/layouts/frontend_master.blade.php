@@ -467,9 +467,11 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <h2>Search Your Product</h2>
-                        <form class="navbar-form position-relative" role="search">
+                        <form class="navbar-form position-relative" role="search"
+                              method="GET" action="{{ route('shop') }}">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Search here...">
+                                <input type="text" name="q" class="form-control" placeholder="Search here..."
+                                       value="{{ request('q') }}" required>
                             </div>
                             <button type="submit" class="submit-btn"><i class="pe-7s-search"></i></button>
                         </form>
