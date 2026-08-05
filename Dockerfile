@@ -1,28 +1,37 @@
-FROM php:8.1 as php
-RUN apt-get update -y && apt-get install -y \
+FROM php:8.4-cli AS php
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
     libicu-dev \
-    libmariadb-dev \
+    libzip-dev \
     unzip zip \
     zlib1g-dev \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     libjpeg62-turbo-dev \
-    libpng-dev
-RUN docker-php-ext-install pdo pdo_mysql bcmath
+    libfreetype6-dev \
+    default-mysql-client \
+    curl ca-certificates gnupg \
+    && rm -rf /var/lib/apt/lists/*
 
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        exif \
+        gd \
+        intl \
+        pdo_mysql \
+        zip
 
-RUN docker-php-ext-install gettext intl pdo_mysql gd
+# Node is required to build the Vite frontend assets.
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+
 COPY . .
 
-COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
-
-RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
-RUN echo "extension=gd" > /usr/local/etc/php/conf.d/docker-php-ext-gd.ini
-
 ENV PORT=8000
-ENTRYPOINT ["docker/entrypoint.sh"]
+
+ENTRYPOINT ["./Docker/entrypoint.sh"]

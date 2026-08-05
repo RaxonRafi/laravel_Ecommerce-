@@ -7,7 +7,7 @@ use App\Models\Subcategory;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Image;
+use Intervention\Image\Laravel\Facades\Image;
 
 use Illuminate\Http\Request;
 class CategoryController extends Controller
@@ -62,7 +62,7 @@ class CategoryController extends Controller
             $new_name = auth()->id() . "-" . Str::random(5) . "." . $request->file('category_photo')->getClientOriginalExtension();
             //step:2-Profile photo upload
             $save_link = base_path("public/uploads/category_photo/") . $new_name;
-            Image::make($request->file('category_photo'))->resize(600, 328)->save($save_link);
+            Image::read($request->file('category_photo'))->resize(600, 328)->save($save_link);
      //photo upload code end
        Category::insert([
            'category_name' => $request->category_name ,
