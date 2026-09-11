@@ -41,6 +41,12 @@ return [
             'store_id' => env('SSLCOMMERZ_STORE_ID'),
             'store_password' => env('SSLCOMMERZ_STORE_PASSWORD'),
             'sandbox' => env('SSLCOMMERZ_SANDBOX', true),
+
+            // Two entirely separate environments with separate credentials.
+            // securepay is LIVE — it is not the sandbox, despite how often it is
+            // quoted as one.
+            'sandbox_url' => 'https://sandbox.sslcommerz.com',
+            'live_url' => 'https://securepay.sslcommerz.com',
         ],
 
         'bkash' => [

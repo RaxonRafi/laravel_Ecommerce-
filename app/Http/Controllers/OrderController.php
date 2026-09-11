@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\PlaceOrderAction;
+use App\Actions\RecordPaymentProblemAction;
+use App\Enums\ProblemReason;
 use App\Exceptions\CheckoutException;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Models\Order;
 use App\Notifications\OrderPlaced;
 use App\Payments\Exceptions\GatewayNotConfigured;
+use App\Payments\Exceptions\SslCommerzRequestFailed;
 use App\Payments\PaymentGatewayManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +24,7 @@ class OrderController extends Controller
     public function __construct(
         private readonly PlaceOrderAction $placeOrder,
         private readonly PaymentGatewayManager $gateways,
+        private readonly RecordPaymentProblemAction $recordProblem,
     ) {
         $this->middleware('auth');
     }
@@ -68,6 +72,19 @@ class OrderController extends Controller
 
             return redirect()->route('order.show', $order)
                 ->with('order_warning', 'Your order was placed, but online payment is not available yet. We will contact you to arrange payment.');
+        } catch (SslCommerzRequestFailed $e) {
+            // The customer never reached a payment page, so nothing was charged —
+            // but the order and its reserved stock stand, and somebody has to chase
+            // the money. That is what the problem payments queue is for.
+            $this->recordProblem->execute(
+                order: $order,
+                reason: ProblemReason::InitiationError,
+                message: $e->getMessage(),
+                gateway: $gateway->key(),
+            );
+
+            return redirect()->route('order.show', $order)
+                ->with('order_warning', 'Your order was placed, but we could not start the online payment. Nothing has been charged — we will contact you to arrange payment.');
         }
 
         if ($result->requiresRedirect()) {

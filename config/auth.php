@@ -108,4 +108,21 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Seeded Admin Account
+    |--------------------------------------------------------------------------
+    |
+    | Credentials for the administrator created by AdminUserSeeder. Read here
+    | rather than via env() in the seeder so they survive `config:cache`. The
+    | seeder refuses to use the fallback password in production.
+    |
+    */
+
+    'admin' => [
+        'name' => env('ADMIN_NAME', 'Administrator'),
+        'email' => env('ADMIN_EMAIL', 'admin@goldfish.test'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
 ];

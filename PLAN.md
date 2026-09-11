@@ -250,17 +250,30 @@ list, status, totals, and a link to the detail view. Paginated.
 
 ## Phase 3 — Payments
 
-### [ ] 3.1 Choose a gateway
-Market-dependent — Stripe (international), or SSLCommerz / bKash (Bangladesh, matching the
-existing SMS provider).
+### [x] 3.1 Choose a gateway
+**SSLCommerz**, matching the Bangladeshi market and the existing SMS provider. bKash remains a
+stub in `app/Payments/Gateways/BkashGateway.php`.
 
 ### [x] 3.2 `payments` table
 `order_id`, `gateway`, `gateway_reference`, `amount`, `currency`, `status`, `payload` (json),
 timestamps. Keep a full audit trail; never overwrite prior attempts.
 
-### [ ] 3.3 Payment flow
-Initiate → redirect → callback. **Verify the webhook signature** and treat the webhook, not the
-browser redirect, as the source of truth. Handle the user abandoning the redirect.
+### [x] 3.3 Payment flow
+Initiate → redirect → callback, against the SSLCommerz v4 hosted checkout.
+
+The IPN is the source of truth: its signature is verified before any outbound call, and every
+callback — the browser return included — is re-validated against the gateway's validation API for
+status, currency and amount before an order settles. `SettlePaymentAction` is the only writer of a
+paid state and is idempotent under a row lock, so a duplicate IPN or a simultaneous admin action
+cannot settle twice. A customer abandoning the redirect leaves the order pending and recoverable.
+
+### [x] 3.3a Failed-payment recovery
+Declines, validation mismatches and failed session requests are recorded in `payments_problem`
+(nullable `order_id`, so a callback matching no order is still captured). Admins work the queue at
+`/admin/problem-payments`, either re-checking with the gateway or recording an out-of-band payment
+with a mandatory reference. Manual settlement uses the existing `paid` status; its origin survives
+on `payments.gateway = 'manual'` and the resolved problem row. Customer cancellations are not
+recorded — abandoning a payment page is normal, not a problem.
 
 ### [x] 3.4 Cash on delivery
 A no-gateway path so the store can operate before the gateway is live.
