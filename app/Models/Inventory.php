@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     use HasFactory;
-    function relationtocolor(){
-        return $this->hasOne(Color::class,'id','color_id');
+
+    public function relationtocolor()
+    {
+        return $this->hasOne(Color::class, 'id', 'color_id');
     }
-    function relationtosize(){
-        return $this->hasOne(Size::class,'id','size_id');
+
+    public function relationtosize()
+    {
+        return $this->hasOne(Size::class, 'id', 'size_id');
     }
 }

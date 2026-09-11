@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\RecordPaymentProblemAction;
 use App\Actions\SettlePaymentAction;
+use App\Enums\PaymentStatus;
 use App\Enums\ProblemReason;
 use App\Models\Order;
 use App\Models\Payment;
@@ -128,7 +129,7 @@ class PaymentCallbackController extends Controller
 
         $this->authoriseCustomer($order);
 
-        if ($order->payment_status === \App\Enums\PaymentStatus::Paid) {
+        if ($order->payment_status === PaymentStatus::Paid) {
             return redirect()->route('order.show', $order)
                 ->with('order_success', 'Thank you! Your payment has been received.');
         }

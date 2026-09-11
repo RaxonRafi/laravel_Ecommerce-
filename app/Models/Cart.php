@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-
     use HasFactory;
 
     protected $fillable = [
@@ -19,17 +18,18 @@ class Cart extends Model
         'user_id',
     ];
 
-    function relationtoproduct()
+    public function relationtoproduct()
     {
         return $this->hasOne(Product::class, 'id', 'product_id');
     }
-    function relationtocolor()
+
+    public function relationtocolor()
     {
         return $this->hasOne(Color::class, 'id', 'color_id');
     }
-    function relationtosize()
+
+    public function relationtosize()
     {
         return $this->hasOne(Size::class, 'id', 'size_id');
     }
-
 }
