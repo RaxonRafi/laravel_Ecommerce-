@@ -32,6 +32,9 @@ WORKDIR /var/www
 
 COPY . .
 
+# Git on Windows doesn't preserve the executable bit, so set it explicitly.
+RUN chmod +x Docker/entrypoint.sh
+
 ENV PORT=8000
 
 ENTRYPOINT ["./Docker/entrypoint.sh"]
