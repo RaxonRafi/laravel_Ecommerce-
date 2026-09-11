@@ -814,6 +814,24 @@
 
                         </ul>
                     </li>
+                        <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+							<i class="fa fa-shopping-cart"></i>
+							<span class="nav-text">Sales</span>
+							@if (($sidebarProblemPaymentCount ?? 0) > 0)
+								<span class="badge badge-danger badge-sm ml-2">{{ $sidebarProblemPaymentCount }}</span>
+							@endif
+						</a>
+                        <ul aria-expanded="false">
+                            <li><a href="{{route('admin.orders.index')}}">Orders</a></li>
+                            <li><a href="{{route('admin.problem-payments.index')}}">
+                                Problem Payments
+                                @if (($sidebarProblemPaymentCount ?? 0) > 0)
+                                    <span class="badge badge-danger badge-sm ml-1">{{ $sidebarProblemPaymentCount }}</span>
+                                @endif
+                            </a></li>
+
+                        </ul>
+                    </li>
                      <li><a href="{{route('variation')}}" class="ai-icon"" aria-expanded="false">
 							<i class="fa fa-th"></i>
 							<span class="nav-text">Variation Manager</span>

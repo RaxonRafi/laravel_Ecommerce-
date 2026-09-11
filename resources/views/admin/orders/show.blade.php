@@ -73,6 +73,15 @@
                 </div>
             </div>
 
+            @if ($order->paymentProblems->whereNull('resolved_at')->isNotEmpty())
+                <div class="alert alert-warning">
+                    <strong>This order has {{ $order->paymentProblems->whereNull('resolved_at')->count() }}
+                    unresolved payment problem(s).</strong>
+                    Money may still be owed.
+                    <a href="{{ route('admin.problem-payments.index') }}" class="alert-link">Review problem payments</a>.
+                </div>
+            @endif
+
             @if ($order->payments->isNotEmpty())
                 <div class="card">
                     <div class="card-body">
@@ -90,7 +99,14 @@
                             <tbody>
                                 @foreach ($order->payments as $payment)
                                     <tr>
-                                        <td>{{ $payment->gateway }}</td>
+                                        <td>
+                                            @if ($payment->gateway === 'manual')
+                                                Manual
+                                                <small class="d-block text-muted">recorded by an administrator</small>
+                                            @else
+                                                {{ $payment->gateway }}
+                                            @endif
+                                        </td>
                                         <td>{{ $payment->gateway_reference ?? '—' }}</td>
                                         <td class="text-end">{{ number_format((float) $payment->amount, 2) }}</td>
                                         <td><span class="badge bg-{{ $payment->status->badge() }}">{{ $payment->status->label() }}</span></td>

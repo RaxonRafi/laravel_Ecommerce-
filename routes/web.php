@@ -1,11 +1,13 @@
 <?php
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\ProblemPaymentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Auth\Events\Login;
@@ -47,11 +49,29 @@ Route::middleware('auth')->group(function () {
     Route::get('order/{order}',[OrderController::class,'show'])->name('order.show');
 });
 
+// Payment gateway callbacks. Public by necessity: SSLCommerz calls the IPN
+// server-to-server with no session, and posts the customer back to the other
+// three cross-origin, so none of them can carry a CSRF token (see
+// PreventRequestForgery::$except). None of them trusts its own request body —
+// every one re-validates with the gateway before anything is settled.
+Route::prefix('payment/sslcommerz')->name('payment.sslcommerz.')->group(function () {
+    Route::post('ipn',[PaymentCallbackController::class,'ipn'])->name('ipn')->middleware('throttle:60,1');
+    Route::match(['get','post'],'success',[PaymentCallbackController::class,'success'])->name('success');
+    Route::match(['get','post'],'fail',[PaymentCallbackController::class,'fail'])->name('fail');
+    Route::match(['get','post'],'cancel',[PaymentCallbackController::class,'cancel'])->name('cancel');
+});
+
 // Admin order management. Guarded by auth + checkrole inside the controller.
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('orders',[AdminOrderController::class,'index'])->name('orders.index');
     Route::get('orders/{order}',[AdminOrderController::class,'show'])->name('orders.show');
     Route::patch('orders/{order}/status',[AdminOrderController::class,'updateStatus'])->name('orders.status');
+
+    // Failed payments waiting on a human.
+    Route::get('problem-payments',[ProblemPaymentController::class,'index'])->name('problem-payments.index');
+    Route::get('problem-payments/{problemPayment}',[ProblemPaymentController::class,'show'])->name('problem-payments.show');
+    Route::post('problem-payments/{problemPayment}/recheck',[ProblemPaymentController::class,'recheck'])->name('problem-payments.recheck');
+    Route::post('problem-payments/{problemPayment}/resolve',[ProblemPaymentController::class,'resolveManually'])->name('problem-payments.resolve');
 });
 
 
