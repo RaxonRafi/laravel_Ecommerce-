@@ -26,7 +26,7 @@ class AddFieldsAtCategoriesTable extends Migration
     public function down()
     {
         Schema::table('categories', function (Blueprint $table) {
-        $table->dropColumn('category_photo');
+            $table->dropColumn('category_photo');
         });
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Actions\RecordPaymentProblemAction;
+use App\Actions\SettlePaymentAction;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\ProblemReason;
@@ -12,8 +13,8 @@ use App\Enums\ProblemResolution;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentProblem;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Tests\Concerns\MakesOrders;
 use Tests\TestCase;
@@ -256,7 +257,7 @@ class AdminProblemPaymentTest extends TestCase
     public function test_a_recheck_when_the_gateway_is_unreachable_changes_nothing(): void
     {
         [$problem, $order] = $this->declinedProblem();
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('timed out'));
+        Http::fake(fn () => throw new ConnectionException('timed out'));
 
         $response = $this->actingAs($this->makeAdmin())
             ->from(route('admin.problem-payments.show', $problem))
@@ -373,7 +374,7 @@ class AdminProblemPaymentTest extends TestCase
         [$problem, $order] = $this->declinedProblem();
 
         // The IPN got there first.
-        app(\App\Actions\SettlePaymentAction::class)->execute($order, self::REFERENCE, 4250.00);
+        app(SettlePaymentAction::class)->execute($order, self::REFERENCE, 4250.00);
         $this->assertSame(1, $order->fresh()->payments()->where('status', PaymentStatus::Paid)->count());
 
         $response = $this->actingAs($this->makeAdmin())

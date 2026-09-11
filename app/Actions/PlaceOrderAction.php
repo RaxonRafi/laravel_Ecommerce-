@@ -7,13 +7,14 @@ namespace App\Actions;
 use App\Enums\OrderStatus;
 use App\Exceptions\CheckoutException;
 use App\Models\Cart;
+use App\Models\coupon;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Shipping;
 use App\Models\User;
-use App\Models\coupon;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -113,7 +114,7 @@ class PlaceOrderAction
      * Inventory rows are locked for the duration of the transaction so two
      * customers cannot both buy the last unit.
      *
-     * @param  \Illuminate\Support\Collection<int, Cart>  $carts
+     * @param  Collection<int, Cart>  $carts
      * @return array<int, array{inventory_id:int, line_total:float, attributes:array<string, mixed>}>
      *
      * @throws CheckoutException

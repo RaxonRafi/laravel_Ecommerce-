@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
@@ -77,9 +78,9 @@ class OrderController extends Controller
 
             // Cash on delivery settles when the goods are handed over.
             if ($target === OrderStatus::Delivered && $order->payment_method->value === 'cod') {
-                $order->payment_status = \App\Enums\PaymentStatus::Paid;
+                $order->payment_status = PaymentStatus::Paid;
                 $order->payments()->latest()->first()?->update([
-                    'status' => \App\Enums\PaymentStatus::Paid,
+                    'status' => PaymentStatus::Paid,
                     'paid_at' => now(),
                 ]);
             }

@@ -31,7 +31,7 @@ class SslCommerzValidator
     /**
      * @param  array<string, mixed>  $context  the raw callback, kept for the problem record
      *
-     * @throws SslCommerzRequestFailed  when the gateway cannot be reached
+     * @throws SslCommerzRequestFailed when the gateway cannot be reached
      */
     public function validate(string $transactionId, ?string $valId = null, array $context = []): ValidationOutcome
     {

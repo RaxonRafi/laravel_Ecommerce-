@@ -18,8 +18,11 @@ class OrderPlacementTest extends TestCase
     use RefreshDatabase;
 
     private int $productId;
+
     private int $colorId;
+
     private int $sizeId;
+
     private int $countryId;
 
     protected function setUp(): void

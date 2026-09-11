@@ -30,10 +30,6 @@ class CreateProductsTable extends Migration
             $table->text('other_info')->nullable();
             $table->string('product_thumbnail_photo')->default('default_product_thumbnail_photo.jpg');
 
-
-
-
-
             $table->timestamps();
         });
     }

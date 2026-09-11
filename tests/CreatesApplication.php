@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 
 trait CreatesApplication
@@ -10,7 +11,7 @@ trait CreatesApplication
     /**
      * Creates the application.
      *
-     * @return \Illuminate\Foundation\Application
+     * @return Application
      */
     public function createApplication()
     {
@@ -53,7 +54,7 @@ trait CreatesApplication
 
         if (! str_ends_with($effective, '_test')) {
             throw new \RuntimeException(
-                "Refusing to run tests against database [{$effective}]: the name must end in '_test'."
+                "Refusing to run tests against database [{$effective}]: the name must end in '_test'.",
             );
         }
     }

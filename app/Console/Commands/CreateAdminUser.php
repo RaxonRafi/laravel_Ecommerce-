@@ -36,7 +36,7 @@ class CreateAdminUser extends Command
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
                 'password' => ['required', 'string', 'min:8'],
-            ]
+            ],
         );
 
         if ($validator->fails()) {
@@ -46,7 +46,7 @@ class CreateAdminUser extends Command
 
             if (User::where('email', $email)->exists()) {
                 $this->newLine();
-                $this->line("That email already exists. To grant it admin rights instead, run:");
+                $this->line('That email already exists. To grant it admin rights instead, run:');
                 $this->line("  php artisan admin:promote {$email}");
             }
 

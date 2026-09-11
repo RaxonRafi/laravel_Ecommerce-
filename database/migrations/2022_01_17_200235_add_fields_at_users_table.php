@@ -29,7 +29,7 @@ class AddFieldsAtUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['phone_number','address', 'profile_photo']);
+            $table->dropColumn(['phone_number', 'address', 'profile_photo']);
         });
     }
 }

@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Actions\RecordPaymentProblemAction;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\ProblemReason;
+use App\Models\Cart;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\PaymentProblem;
+use App\Models\User;
+use App\Payments\Exceptions\GatewayNotConfigured;
+use App\Payments\Exceptions\SslCommerzRequestFailed;
 use App\Payments\Gateways\SslCommerzGateway;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\Concerns\MakesOrders;
 use Tests\TestCase;
@@ -55,7 +61,7 @@ class SslCommerzCheckoutTest extends TestCase
         $this->fakeSession();
         $order = $this->makeOrder();
         // The pending row PlaceOrderAction writes, before any reference exists.
-        \App\Models\Payment::create([
+        Payment::create([
             'order_id' => $order->id,
             'gateway' => 'sslcommerz',
             'amount' => $order->grand_total,
@@ -127,7 +133,7 @@ class SslCommerzCheckoutTest extends TestCase
     {
         config(['payment.gateways.sslcommerz.store_password' => '']);
 
-        $this->expectException(\App\Payments\Exceptions\GatewayNotConfigured::class);
+        $this->expectException(GatewayNotConfigured::class);
 
         $this->gateway()->charge($this->makeOrder());
     }
@@ -141,8 +147,8 @@ class SslCommerzCheckoutTest extends TestCase
         try {
             $this->gateway()->charge($order);
             $this->fail('Expected the gateway to report the failed request.');
-        } catch (\App\Payments\Exceptions\SslCommerzRequestFailed $e) {
-            app(\App\Actions\RecordPaymentProblemAction::class)->execute(
+        } catch (SslCommerzRequestFailed $e) {
+            app(RecordPaymentProblemAction::class)->execute(
                 order: $order,
                 reason: ProblemReason::InitiationError,
                 message: $e->getMessage(),
@@ -191,7 +197,7 @@ class SslCommerzCheckoutTest extends TestCase
     /**
      * A cart with one in-stock line and a shipping destination, ready to check out.
      */
-    private function placeableCart(\App\Models\User $customer): int
+    private function placeableCart(User $customer): int
     {
         $countryId = $this->makeCountry();
 
@@ -224,7 +230,7 @@ class SslCommerzCheckoutTest extends TestCase
             'product_id' => $productId, 'color_id' => $colorId, 'size_id' => $sizeId,
             'quantity' => 5, 'created_at' => now(), 'updated_at' => now(),
         ]);
-        \App\Models\Cart::create([
+        Cart::create([
             'user_id' => $customer->id, 'product_id' => $productId,
             'product_current_price' => 4000,
             'color_id' => $colorId, 'size_id' => $sizeId, 'cart_amount' => 1,

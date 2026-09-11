@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Shipping extends Model
 {
     use HasFactory;
-    public function relationTocountry(){
-        return $this->hasOne(Country::class, 'id' , 'country_id');
+
+    public function relationTocountry()
+    {
+        return $this->hasOne(Country::class, 'id', 'country_id');
     }
 }

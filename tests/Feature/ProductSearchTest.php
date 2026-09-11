@@ -6,7 +6,6 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProductSearchTest extends TestCase
@@ -14,6 +13,7 @@ class ProductSearchTest extends TestCase
     use RefreshDatabase;
 
     private int $categoryId;
+
     private int $otherCategoryId;
 
     protected function setUp(): void

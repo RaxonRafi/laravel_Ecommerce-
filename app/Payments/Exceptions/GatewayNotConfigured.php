@@ -12,7 +12,7 @@ class GatewayNotConfigured extends RuntimeException
     {
         return new self(
             "The '{$gateway}' payment gateway is not configured. Add its credentials "
-            ."to .env, enable it in config/payment.php, and implement its charge() method."
+            .'to .env, enable it in config/payment.php, and implement its charge() method.',
         );
     }
 }

@@ -48,8 +48,8 @@ final class SslCommerzGateway implements PaymentGateway
     }
 
     /**
-     * @throws GatewayNotConfigured  when credentials are missing
-     * @throws SslCommerzRequestFailed  when the gateway cannot be reached or refuses
+     * @throws GatewayNotConfigured when credentials are missing
+     * @throws SslCommerzRequestFailed when the gateway cannot be reached or refuses
      */
     public function charge(Order $order): PaymentResult
     {
